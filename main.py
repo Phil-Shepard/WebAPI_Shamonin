@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 import models
 
 from database import engine
-from routes import router_websocket, router_categories, router_items
+from routes import router_websocket, router_users, router_comments, router_tags
 
 # Создание таблиц в БД
 models.Base.metadata.create_all(bind=engine)
@@ -13,8 +13,8 @@ models.Base.metadata.create_all(bind=engine)
 templates = Jinja2Templates(directory="templates")
 
 app = FastAPI(
-    title="WebSocketChatCRUDNotify",
-    summary="WebSocket Chat + Notifications of CRUD operations!",
+    title="WebSocketCRUDNotify",
+    description="WebSocket Chat + Notifications of CRUD operations!",
     version="0.0.1",
 )
 
@@ -24,17 +24,22 @@ async def read_root(request: Request):
     http_protocol = request.headers.get("x-forwarded-proto", "http")
     ws_protocol = "wss" if http_protocol == "https" else "ws"
     server_urn = request.url.netloc
-    return templates.TemplateResponse("index.html",
-                                      {"request": request,
-                                       "http_protocol": http_protocol,
-                                       "ws_protocol": ws_protocol,
-                                       "server_urn": server_urn})
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "http_protocol": http_protocol,
+            "ws_protocol": ws_protocol,
+            "server_urn": server_urn,
+        },
+    )
 
 
 # Подключаем созданные роутеры в приложение
 app.include_router(router_websocket)
-app.include_router(router_categories)
-app.include_router(router_items)
+app.include_router(router_users)
+app.include_router(router_comments)
+app.include_router(router_tags)
 
 if __name__ == '__main__':
     import uvicorn

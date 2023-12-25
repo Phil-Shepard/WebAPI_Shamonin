@@ -1,15 +1,15 @@
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from sqlalchemy.orm import Session
 
 import schemas
-from database import get_db
-from sqlalchemy.orm import Session
 from crud import (
     create_user, get_users, get_user, update_user, delete_user,
     create_comment, get_comments, get_comment, update_comment, delete_comment,
     create_tag, get_tags, get_tag, update_tag, delete_tag
 )
+from database import get_db
 
 router_websocket = APIRouter()
 router_users = APIRouter(prefix='/users', tags=['user'])
